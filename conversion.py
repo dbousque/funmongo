@@ -6,13 +6,15 @@ def invalid_message(model, obj, mess):
 def pymongo_to_funmongo(model, obj, unsafe=False):
 	if "funmongo_subtype" in obj:
 		mod = __import__(model.__module__, fromlist=[""])
-		if not hasattr(mod, obj["subtype"]):
-			raise Exception(subtype_not_found(model, obj["subtype"]))
-		model = getattr(mod, obj["subtype"])
+		typ = obj["funmongo_subtype"] if type(obj["funmongo_subtype"]) is str else obj["funmongo_subtype"][0]
+		if not hasattr(mod, typ):
+			raise Exception(subtype_not_found(model, typ))
+		model = getattr(mod, typ)
 	ident = obj["_id"]
 	del obj["_id"]
 	try:
-		ret = model(**obj, unsafe=unsafe)
+		ret = model.__new__(model)
+		ret = ret.funmongo_init(args=obj, unsafe=unsafe)
 		ret._id = ident
 		if not unsafe:
 			ret.validate()
