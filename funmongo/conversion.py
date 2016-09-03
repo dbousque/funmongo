@@ -14,7 +14,7 @@ def pymongo_to_funmongo(model, obj, unsafe=False):
 	del obj["_id"]
 	try:
 		ret = model.__new__(model)
-		ret = ret.funmongo_init(args=obj, unsafe=unsafe)
+		ret.funmongo_init(args=obj, unsafe=unsafe)
 		ret._id = ident
 		if not unsafe:
 			ret.validate()

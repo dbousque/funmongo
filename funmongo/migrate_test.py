@@ -1,8 +1,8 @@
 
 
 from tests.test_models1 import EuropeanProduct
-from utils import get_collection, new_collection
-from find import find_docs, remove_all
+from funmongo.funmongo.utils import get_collection, new_collection
+from funmongo.find import find_docs, remove_all
 
 new_collec = new_collection("products")
 prods = find_docs(EuropeanProduct, raw_cursor=True)

@@ -1,9 +1,9 @@
 
 
 from datetime import datetime
-from config import options, db
-from utils import my_print, hasattr_n_val
-from errors import *
+from funmongo.config import options, db
+from funmongo.utils import my_print, hasattr_n_val
+from funmongo.errors import *
 from copy import copy
 
 def find_valid_parent_docs(current_doc):

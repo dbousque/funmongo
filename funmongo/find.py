@@ -1,8 +1,8 @@
 
 
-from config import db
-from conversion import pymongo_to_funmongo
-from utils import hasattr_n_val
+from funmongo.config import db
+from funmongo.conversion import pymongo_to_funmongo
+from funmongo.utils import hasattr_n_val
 import sys
 
 class IterDocs:
@@ -46,7 +46,6 @@ class IterDocs:
 			return ret
 
 def restrict_to_subtype(model, sel):
-	# raise Exception("Needs to implement funmongo_subtype find in case of a list funmongo_subtype")
 	if hasattr_n_val(model, "funmongo_is_child", True):
 		sel["funmongo_subtype"] = model.__name__
 	return sel

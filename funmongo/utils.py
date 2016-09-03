@@ -1,7 +1,7 @@
 
 
 import sys
-from config import db
+from funmongo.config import db
 
 def my_print(st):
 	sys.stdout.write(st)
