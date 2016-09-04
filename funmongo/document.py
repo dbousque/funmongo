@@ -168,8 +168,16 @@ class Document:
 		for key,typ in self.structure.items():
 			if not key in self.doc_items:
 				raise Exception("Missing field : " + key + self.error_info())
-			if not isinstance(self.doc_items[key], typ):
-				raise Exception("Bad type for field " + key + self.error_info())
+			if type(typ) is list:
+				ok = False
+				for t in typ:
+					if isinstance(self.doc_items[key], t):
+						ok = True
+				if not ok:
+					raise Exception("Bad type for field " + key + self.error_info())
+			else:
+				if not isinstance(self.doc_items[key], typ):
+					raise Exception("Bad type for field " + key + self.error_info())
 		expected_nb_fields = len(self.structure.keys())
 		if is_child:
 			expected_nb_fields += 1
