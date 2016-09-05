@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name='funmongo',
-	version='0.1',
+	version='0.1.1',
 	description='A safe and easy to use MongoDB ORM for python',
 	long_description="None",
 	url='https://github.com/dbousque/funmongo',

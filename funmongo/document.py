@@ -32,6 +32,8 @@ class Document:
 				if key in type(self).structure:
 					raise Exception(error_field_already_defined(self, key, par))
 			type(self).structure.update(par_structure)
+			if hasattr(par, "autoset"):
+				type(self).autoset.update(par.autoset)
 			if hasattr(par, "indexes"):
 				for ind in par.indexes:
 					if ind not in type(self).indexes:
@@ -45,12 +47,14 @@ class Document:
 		for par in parents:
 			mod = __import__(par.__module__, fromlist=[""])
 			if not hasattr(mod, type(self).__name__):
-				raise Exception(subtype_not_found(model, type(self).__name__))
+				raise Exception(subtype_not_found(par, type(self).__name__))
 
 	def update_structure_if_needed(self):
 		if not hasattr_n_val(type(self), "funmongo_already_done", True):
 			if not hasattr(type(self), "structure"):
 				type(self).structure = {}
+			if not hasattr(type(self), "autoset"):
+				type(self).autoset = {}
 			if not hasattr(type(self), "indexes"):
 				type(self).indexes = []
 			if not hasattr(type(self), "mutable"):
@@ -88,6 +92,8 @@ class Document:
 		for key,val in args.items():
 			if unsafe:
 				self.unsafe_set(key, val)
+			elif hasattr_n_val(type(self), "can_be_incomplete", True) and val is None:
+				continue
 			else:
 				self[key] = val
 		if hasattr(self, "init_func") and self.init_func:
@@ -165,9 +171,17 @@ class Document:
 		err = self.invalid_document()
 		if err:
 			raise Exception(err)
+		# checking that autoset fields are not set, and setting them
+		for key,func in type(self).autoset:
+			if not key in self.doc_items:
+				self[key] = func(self)
 		for key,typ in self.structure.items():
 			if not key in self.doc_items:
-				raise Exception("Missing field : " + key + self.error_info())
+				if hasattr_n_val(type(self), "can_be_incomplete", True):
+					self[key] = None
+					continue
+				else:
+					raise Exception("Missing field : " + key + self.error_info())
 			if type(typ) is list:
 				ok = False
 				for t in typ:
