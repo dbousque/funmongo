@@ -142,13 +142,21 @@ class Document:
 			raise Exception("Field " + key + " does not exist in the document")
 		del self.doc_items[key]
 
-	def keys():
+	def complete_if_can_be_incomplete(self):
+		all_there = True
+		for key in type(self).structure.keys():
+			if key not in self:
+				all_there = False
+				break
+		return all_there
+
+	def keys(self):
 		return self.doc_items.keys()
 
-	def values():
+	def values(self):
 		return self.doc_items.values()
 
-	def items():
+	def items(self):
 		return self.doc_items.items()
 
 	def __iter__(self):
