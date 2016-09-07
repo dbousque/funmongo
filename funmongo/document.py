@@ -142,10 +142,16 @@ class Document:
 			raise Exception("Field " + key + " does not exist in the document")
 		del self.doc_items[key]
 
+	def to_dict(self):
+		res = {}
+		for key,val in self.doc_items.items():
+			res[key] = val
+		return res
+
 	def complete_if_can_be_incomplete(self):
 		all_there = True
 		for key in type(self).structure.keys():
-			if key not in self:
+			if key not in self or self[key] is None:
 				all_there = False
 				break
 		return all_there
@@ -186,10 +192,12 @@ class Document:
 		for key,typ in self.structure.items():
 			if not key in self.doc_items:
 				if hasattr_n_val(type(self), "can_be_incomplete", True):
-					self[key] = None
+					self.unsafe_set(key, None)
 					continue
 				else:
 					raise Exception("Missing field : " + key + self.error_info())
+			if hasattr_n_val(type(self), "can_be_incomplete", True) and self.doc_items[key] is None:
+				continue
 			if type(typ) is list:
 				ok = False
 				for t in typ:
@@ -212,7 +220,7 @@ class Document:
 		return hasattr(self, '_id')
 
 	def remove(self):
-		if hasattr(self, _id):
+		if hasattr(self, "_id"):
 			db[self.collec].delete_one({"_id": self._id})
 			del self.__dict__['_id']
 

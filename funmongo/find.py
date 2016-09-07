@@ -39,8 +39,11 @@ class IterDocs:
 				add = self.add_data(ret)
 				if add is None:
 					continue
-				ret = (self.apply_func(ret), add)
-			else:
+				if self.apply_func:
+					ret = (self.apply_func(ret), add)
+				else:
+					ret = (ret, add)
+			elif self.apply_func:
 				ret = self.apply_func(ret)
 			self.taken += 1
 			return ret
@@ -69,7 +72,7 @@ def maybe_from_id(model, ident, unsafe=False):
 def from_id(model, ident, unsafe=False):
 	return find_one_doc(model, {"_id": ident}, unsafe=unsafe)
 
-def find_docs(model, sel=None, raw_cursor=False, pred=None, add_data=None, apply_func=id, skip=0, limit=0, unsafe=False, **kwargs):
+def find_docs(model, sel=None, raw_cursor=False, pred=None, add_data=None, apply_func=None, skip=0, limit=0, unsafe=False, **kwargs):
 	if sel is None:
 		sel = {}
 	sel = restrict_to_subtype(model, sel)
