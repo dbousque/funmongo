@@ -146,6 +146,8 @@ class Document:
 		res = {}
 		for key,val in self.doc_items.items():
 			res[key] = val
+		if hasattr(self, "_id"):
+			res["_id"] = self._id
 		return res
 
 	def complete_if_can_be_incomplete(self):
