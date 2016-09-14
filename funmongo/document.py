@@ -223,8 +223,12 @@ class Document:
 
 	def remove(self):
 		if hasattr(self, "_id"):
+			if options["verbose"]:
+				my_print("removing " + str(self._id) + "...")
 			db[self.collec].delete_one({"_id": self._id})
 			del self.__dict__['_id']
+			if options["verbose"]:
+				my_print("removed")
 
 	def save(self, unsafe=False):
 		if not unsafe:
