@@ -125,8 +125,17 @@ class Document:
 				raise Exception(error_unknown_field(self, attr, "Cannot set field "))
 		else:
 			# checking that the value has the right type defined in structure
-			if not isinstance(val, self.structure[attr]):
-				raise Exception(error_wrong_val_type(self, attr, val))
+			if type(self.structure[attr]) is list:
+				ok = False
+				for typ in self.structure[attr]:
+					if isinstance(val, typ):
+						ok = True
+						break
+				if not ok:
+					raise Exception(error_wrong_val_type(self, attr, val))
+			else:
+				if not isinstance(val, self.structure[attr]):
+					raise Exception(error_wrong_val_type(self, attr, val))
 			# checking that the field is not already set or that this field is mutable
 			if attr in self.doc_items:
 				if not hasattr_n_val(self, "all_mutable", True):

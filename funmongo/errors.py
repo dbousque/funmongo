@@ -5,7 +5,11 @@ def error_field_str(attr):
 def error_unknown_field(doc, attr, start):
 	return start + repr(attr) + ", not in structure and additional_fields not set to True" + doc.error_info()
 def error_wrong_val_type(doc, attr, val):
-	return "Bad type for field " + repr(attr) + " : gave " + repr(type(val).__name__) + " but expected type " + repr(doc.structure[attr].__name__) + " (value : " + repr(val) + ")" + doc.error_info()
+	if type(doc.structure[attr]) is list:
+		typ = [typ.__name__ for typ in doc.structure[attr]]
+	else:
+		typ = doc.structure[attr].__name__
+	return "Bad type for field " + repr(attr) + " : gave " + repr(type(val).__name__) + " but expected type " + repr(typ) + " (value : " + repr(val) + ")" + doc.error_info()
 def error_not_mutable(doc, attr):
 	return "The field " + repr(attr) + " is already set and was not specified as mutable" + doc.error_info()
 def error_field_already_defined(doc, key, par):
