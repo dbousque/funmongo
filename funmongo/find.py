@@ -1,6 +1,6 @@
 
 
-from funmongo.config import db
+from funmongo.config import options
 from funmongo.conversion import pymongo_to_funmongo
 from funmongo.utils import hasattr_n_val
 import sys
@@ -55,7 +55,7 @@ def restrict_to_subtype(model, sel):
 
 def find_maybe_one_doc(model, sel, unsafe=False, **kwargs):
 	sel = restrict_to_subtype(model, sel)
-	res = db[model.collec].find_one(sel, **kwargs)
+	res = options["db"][model.collec].find_one(sel, **kwargs)
 	if not res:
 		return None
 	return pymongo_to_funmongo(model, res, unsafe=unsafe)
@@ -79,11 +79,11 @@ def find_docs(model, sel=None, raw_cursor=False, pred=None, add_data=None, apply
 	if pred or add_data:
 		if raw_cursor:
 			raise Exception("find_docs cannot be called with raw_cursor=True and pred, apply_func or add_data defined")
-		cur = db[model.collec].find(sel, **kwargs)
+		cur = options["db"][model.collec].find(sel, **kwargs)
 		return IterDocs(model, cur, apply_func, pred=pred, add_data=add_data, skip=skip, limit=limit, unsafe=unsafe)
 	kwargs["limit"] = limit
 	kwargs["skip"] = skip
-	cur = db[model.collec].find(sel, **kwargs)
+	cur = options["db"][model.collec].find(sel, **kwargs)
 	if raw_cursor:
 		if apply_func is not id:
 			raise Exception("find_docs cannot be called with raw_cursor=True and pred, apply_func or add_data defined")
@@ -97,4 +97,4 @@ def remove_all(model, sel=None, **kwargs):
 	if sel is None:
 		sel = {}
 	sel = restrict_to_subtype(model, sel)
-	db[model.collec].remove(sel, **kwargs)
+	options["db"][model.collec].remove(sel, **kwargs)

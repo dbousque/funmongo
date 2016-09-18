@@ -1,7 +1,7 @@
 
 
 import sys
-from funmongo.config import db
+from funmongo.config import options
 
 def my_print(st):
 	sys.stdout.write(st)
@@ -23,10 +23,10 @@ def read_batch(cur, n=1000):
 	return ret
 
 def get_collection(model):
-	return db[model.collec]
+	return options["db"][model.collec]
 
 def new_collection(collec_name):
-	return db[collec_name]
+	return options["db"][collec_name]
 
 def get_db(model):
-	return db
+	return options["db"]

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: funmongo
-Version: 0.1.1
+Version: 0.1.3
 Summary: A safe and easy to use MongoDB ORM for python
 Home-page: https://github.com/dbousque/funmongo
 Author: Dominik Bousquet

@@ -1,7 +1,7 @@
 
 
 from datetime import datetime
-from funmongo.config import options, db
+from funmongo.config import options
 from funmongo.utils import my_print, hasattr_n_val
 from funmongo.errors import *
 from copy import copy
@@ -71,9 +71,9 @@ class Document:
 				self.update_structure_with_parents(parents)
 			for ind in type(self).indexes:
 				if type(ind) is str:
-					db[self.collec].create_index(ind)
+					options["db"][self.collec].create_index(ind)
 				else:
-					db[self.collec].create_index([ind])
+					options["db"][self.collec].create_index([ind])
 			type(self).funmongo_already_done = True
 
 	def funmongo_init(self, args=None, unsafe=False):
@@ -234,7 +234,7 @@ class Document:
 		if hasattr(self, "_id"):
 			if options["verbose"]:
 				my_print("removing " + str(self._id) + "...")
-			db[self.collec].delete_one({"_id": self._id})
+			options["db"][self.collec].delete_one({"_id": self._id})
 			del self.__dict__['_id']
 			if options["verbose"]:
 				my_print("removed")
@@ -245,7 +245,7 @@ class Document:
 		if hasattr(self, '_id'):
 			if options["verbose"]:
 				my_print("saving existing document, replacing...")
-			ret = db[self.collec].replace_one({"_id": self._id}, self.doc_items)
+			ret = options["db"][self.collec].replace_one({"_id": self._id}, self.doc_items)
 			if "_id" in self.doc_items:
 				if self.doc_items["_id"] != self._id:
 					raise Exception("Unexpected : returned id is not the same as the one before")
@@ -255,7 +255,7 @@ class Document:
 		else:
 			if options["verbose"]:
 				my_print("saving document...")
-			ret = db[self.collec].insert_one(self.doc_items)
+			ret = options["db"][self.collec].insert_one(self.doc_items)
 			if options["verbose"]:
 				my_print("saved : " + str(self.doc_items["_id"]))
 			self._id = ret.inserted_id
